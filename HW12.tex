@@ -1,4 +1,54 @@
-\documentclass{article}
+\documentclass{article}\usepackage[]{graphicx}\usepackage[]{xcolor}
+% maxwidth is the original width if it is less than linewidth
+% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlsng}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hldef}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+\let\hlipl\hlkwb
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
 \usepackage[margin=1.0in]{geometry} % To set margins
 \usepackage{amsmath}  % This allows me to use the align functionality.
                       % If you find yourself trying to replicate
@@ -12,11 +62,9 @@
 \usepackage{float}    % For telling R where to put a table/figure
 \usepackage{natbib}        %For the bibliography
 \bibliographystyle{apalike}%For the bibliography
-
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
 \begin{document}
-<<echo=F, message=F, warning=F>>=
-library(tidyverse)
-@
+
 
 \begin{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -50,9 +98,16 @@ alternative.
   \item What values of $t_{20}$ provide statistically discernible support for the
   alternative hypothesis? \\
 Because we are doing a one-sided t-test with a significance level of 0.05, we need to compare $T_{20}$ to the critical value with $n-1=20-1=19$ degrees of freedom, denoted as $t_{0.95, 19}$. This is the value in which 95\% of the t-distribution will lie to the left of it, and 5\% will lie to the right of it. 
-<<message=F, warning=F>>=
-(crit.value = qt(0.95, df=19))
-@
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{(crit.value} \hlkwb{=} \hlkwd{qt}\hldef{(}\hlnum{0.95}\hldef{,} \hlkwc{df}\hldef{=}\hlnum{19}\hldef{))}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.729133
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
 So we got that $t_{0.95, 19} = 1.729$, and because the alternative hypothesis is that the mean is greater than 0, we want the $T_{20}$ values that are greater than 1.729. So there is statistically discernible support for the alternative hypothesis if $T_{20} > 1.729.$
   \item What values of $t_{30}$ provide statistically discernible support for the
   alternative hypothesis?
