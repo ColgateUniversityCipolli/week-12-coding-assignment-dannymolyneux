@@ -101,7 +101,7 @@ Because we are doing a one-sided t-test with a significance level of 0.05, we ne
 \begin{knitrout}
 \definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
 \begin{alltt}
-\hldef{(crit.value} \hlkwb{=} \hlkwd{qt}\hldef{(}\hlnum{0.95}\hldef{,} \hlkwc{df}\hldef{=}\hlnum{19}\hldef{))}
+\hldef{(crit.value.20} \hlkwb{=} \hlkwd{qt}\hldef{(}\hlnum{0.95}\hldef{,} \hlkwc{df}\hldef{=}\hlnum{19}\hldef{))}
 \end{alltt}
 \begin{verbatim}
 ## [1] 1.729133
@@ -110,13 +110,59 @@ Because we are doing a one-sided t-test with a significance level of 0.05, we ne
 \end{knitrout}
 So we got that $t_{0.95, 19} = 1.729$, and because the alternative hypothesis is that the mean is greater than 0, we want the $T_{20}$ values that are greater than 1.729. So there is statistically discernible support for the alternative hypothesis if $T_{20} > 1.729.$
   \item What values of $t_{30}$ provide statistically discernible support for the
-  alternative hypothesis?
+  alternative hypothesis? \\
+Here we are going to do the same as before, but now with $n-1=30-1=29$ degrees of freedom, denoted as $t_{0.95, 29}$. This again is the value in which 95\% of the t-distribution will lie to the left of it, and 5\% will lie to the right of it.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{(crit.value.30} \hlkwb{=} \hlkwd{qt}\hldef{(}\hlnum{0.95}\hldef{,} \hlkwc{df}\hldef{=}\hlnum{29}\hldef{))}
+\end{alltt}
+\begin{verbatim}
+## [1] 1.699127
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+So we got that $t_{0.95, 29} = 1.699$, and because the alternative hypothesis is that the mean is greater than 0, we want the $T_{30}$ values that are greater than 1.699. So there is statistically discernible support for the alternative hypothesis if $T_{30} > 1.699.$
   \item Suppose $f_X(x)$ is a Laplace distribution with $a=0$ and $b=4.0$.
   Conduct a simulation study to assess the Type I error rate of this approach.\\
   \textbf{Note:} You can use the \texttt{rlaplace()} function from the \texttt{VGAM}
-  package for \texttt{R} \citep{VGAM}.
+  package for \texttt{R} \citep{VGAM}. \\
+To simulate the study, I am doing 10000 simulations, where each simulation creates 30 observations of the Laplace(0, 4) distribution. First, I calculate the test statistic for the first 20 observations, and reject if it meets the criteria from part a. If not, then I calculate the test statistic for all 30 observations, and reject if it meets the criteria from part b.
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hlkwd{library}\hldef{(VGAM)}
+\hlkwd{set.seed}\hldef{(}\hlnum{7272}\hldef{)}
+\hldef{simulations} \hlkwb{=} \hlnum{10000} \hlcom{#number of simulations}
+\hldef{n} \hlkwb{=} \hlnum{30} \hlcom{#total sample size}
+\hldef{n.peek} \hlkwb{=} \hlnum{20} \hlcom{#sample size for peeking }
+\hldef{rejections} \hlkwb{=} \hlnum{0} \hlcom{#counter for number of rejections (rejecting the null)}
+\hlkwa{for}\hldef{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hldef{simulations)\{}
+  \hldef{x} \hlkwb{=} \hlkwd{rlaplace}\hldef{(n,} \hlkwc{location} \hldef{=} \hlnum{0}\hldef{,} \hlkwc{scale} \hldef{=} \hlnum{4}\hldef{)} \hlcom{#30 observations of Laplace(0, 4) distribution}
+  \hldef{x.peek} \hlkwb{=} \hldef{x[}\hlnum{1}\hlopt{:}\hlnum{20}\hldef{]} \hlcom{#first 20 observations}
+  \hldef{t.peek} \hlkwb{=} \hlkwd{mean}\hldef{(x.peek)}\hlopt{/}\hldef{(}\hlkwd{sd}\hldef{(x.peek)}\hlopt{/}\hlkwd{sqrt}\hldef{(n.peek))} \hlcom{#t statistic after peeking}
+  \hlkwa{if}\hldef{(t.peek} \hlopt{>} \hldef{crit.value.20)\{}
+    \hldef{rejections} \hlkwb{=} \hldef{rejections} \hlopt{+} \hlnum{1} \hlcom{#reject if T20 is greater than the critical value with df=19}
+  \hldef{\}}
+  \hlkwa{else} \hldef{\{}
+    \hldef{t.final} \hlkwb{=} \hlkwd{mean}\hldef{(x)}\hlopt{/}\hldef{(}\hlkwd{sd}\hldef{(x)}\hlopt{/}\hlkwd{sqrt}\hldef{(n))} \hlcom{#t statistic for all 30 observations}
+    \hlkwa{if}\hldef{(t.final} \hlopt{>} \hldef{crit.value.30)\{}
+      \hldef{rejections} \hlkwb{=} \hldef{rejections} \hlopt{+} \hlnum{1} \hlcom{#reject if T30 is greater than the critical value with df=29}
+    \hldef{\}}
+  \hldef{\}}
+\hldef{\}}
+\hlcom{#every rejection is a type 1 error because we are assuming the null is true}
+\hldef{(type1.error.rate} \hlkwb{=} \hldef{rejections} \hlopt{/} \hldef{simulations)}
+\end{alltt}
+\begin{verbatim}
+## [1] 0.0763
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
+The Type I error rate is represented by the number of rejections divided by the number of simulations. The reason that each rejection is an occurrence of a Type I error is because we are under the assumption that the null hypothesis is true ($\mu_X = 0$). So based on the seed that I set, I got a Type I error rate of 0.0763, which is greater than our significance level of 0.05. This means that this study increases the chance of getting a Type I error. This is due to the fact that we are checking for rejection twice. If we only checked after 30 observations, then the Type I error rate should be around 0.05, but the probability of rejection goes up when you are testing for it twice per simulation.
   \item \textbf{Optional Challenge:} Can you find a value of $\alpha<0.05$ that yields a 
-  Type I error rate of 0.05?
+  Type I error rate of 0.05? \\
+Yes, if you change $\alpha$ to 0.033, which changes the critical values to $t_{0.967, 19} = 1.951$, and $t_{0.967, 29} = 1.911$. Because both critical values have increased, it will be less likely for the test statistic to be greater than the critical value, which then decreases the Type I error rate. This significance level of 0.03 yields a Type I error rate of exactly 0.05 given the seed that I set (7272).
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
