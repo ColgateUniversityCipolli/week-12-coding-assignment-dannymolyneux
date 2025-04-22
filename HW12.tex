@@ -245,11 +245,11 @@ For the Beta(10,2) distribution (left-skewed), the Type I error rate for the rig
 For the Beta(10,2) distribution (left-skewed), the Type I error rate for the two-tailed test was 0.0596. For the Beta(2,10) distribution (right-skewed), it was also 0.0596. For the Beta(10,10) distribution (symmetric), it was 0.0498. 
     \item How does skewness of the underlying population distribution effect
     Type I error across the test types?
-For left-skewed population distributions (Beta(10,2)), there is going to be a higher Type I error rate (\textgreater 0.05) for the right-tailed test. This is because the t-statistic is more likely to be in the right tail, because more of the data is on the right side. The opposite is true for the left-tailed test (\textless 0.05), because the t-statistic is less likely to be in the left tail. Finally, the two-tailed error rate is 
+For left-skewed population distributions (Beta(10,2)), there is going to be a higher Type I error rate (\textgreater 0.05) for the right-tailed test. This is because the t-statistic is more likely to be in the right tail, because more of the data is on the right side. The opposite is true for the left-tailed test (\textless 0.05), because the t-statistic is less likely to be in the left tail. Finally, the two-tailed error rate is slightly higher than 0.05 due to the skewness, but not as high as right-tailed because it is looking at both tails.
 \\
 For right-skewed population distributions (Beta(2,10)), the opposite is true for left-tailed and right-tailed tests. This is because the majority of the data is now on the left side. So left-tailed tests will yield a higher Type I error rate, while right-tailed tests will yield a lower Type I error rate. The two-tailed error rate is the same as it is for left-skewed population distributions.
 \\
-Lastly, for symmetric population distributions (Beta(10,10)), all of the tests should result in a Type I error rate similar to 0.05. This is because the distribution is symmetric and approximately normal
+Lastly, for symmetric population distributions (Beta(10,10)), all of the tests should result in a Type I error rate similar to 0.05. This is because the distribution is symmetric and approximately normal. So the Type I error rate should be similar to alpha.
   \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
