@@ -173,16 +173,83 @@ Yes, if you change $\alpha$ to 0.033, which changes the critical values to $t_{0
   Specifically, generate samples of size $n=15$ from the Beta(10,2), Beta(2,10), 
   and Beta(10,10) distributions and conduct the following hypothesis tests against 
   the actual mean for each case (e.g., $\frac{10}{10+2}$, $\frac{2}{10+2}$, and 
-  $\frac{10}{10+10}$). 
+  $\frac{10}{10+10}$).
+\begin{knitrout}
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}\begin{kframe}
+\begin{alltt}
+\hldef{n} \hlkwb{=} \hlnum{15} \hlcom{#sample size}
+\hldef{sig.level} \hlkwb{=} \hlnum{0.05} \hlcom{#significance level}
+\hlcom{#function that gives Type I error rate for each type of t test for a given Beta distribution}
+\hldef{beta.t.test} \hlkwb{=} \hlkwa{function}\hldef{(}\hlkwc{true.mean}\hldef{,} \hlkwc{alpha}\hldef{,} \hlkwc{beta}\hldef{)\{}
+  \hlcom{#counters for rejections for each type of t test }
+  \hldef{rejections.left} \hlkwb{=} \hlnum{0}
+  \hldef{rejections.right} \hlkwb{=} \hlnum{0}
+  \hldef{rejections.two} \hlkwb{=} \hlnum{0}
+  \hlkwd{set.seed}\hldef{(}\hlnum{7272}\hldef{)}
+  \hlkwa{for}\hldef{(i} \hlkwa{in} \hlnum{1}\hlopt{:}\hldef{simulations)\{}
+    \hldef{x} \hlkwb{=} \hlkwd{rbeta}\hldef{(n,} \hlkwc{shape1} \hldef{= alpha,} \hlkwc{shape2} \hldef{= beta)}
+    \hlcom{#left tailed test for Ha: mu < true.mean}
+    \hldef{left.t.test} \hlkwb{=} \hlkwd{t.test}\hldef{(x,} \hlkwc{mu} \hldef{= true.mean,} \hlkwc{alternative} \hldef{=} \hlsng{"less"}\hldef{)}
+    \hlcom{#right tailed test for Ha: mu > true.mean}
+    \hldef{right.t.test} \hlkwb{=} \hlkwd{t.test}\hldef{(x,} \hlkwc{mu} \hldef{= true.mean,} \hlkwc{alternative} \hldef{=} \hlsng{"greater"}\hldef{)}
+    \hlcom{#Two tailed test for Ha: mu != true.mean}
+    \hldef{twosided.t.test} \hlkwb{=} \hlkwd{t.test}\hldef{(x,} \hlkwc{mu} \hldef{= true.mean,} \hlkwc{alternative} \hldef{=} \hlsng{"two.sided"}\hldef{)}
+
+    \hlkwa{if}\hldef{(left.t.test}\hlopt{$}\hldef{p.value} \hlopt{<} \hldef{sig.level) \{} \hlcom{#if p value for left-tailed test is less than 0.05}
+      \hldef{rejections.left} \hlkwb{=} \hldef{rejections.left} \hlopt{+} \hlnum{1} \hlcom{#reject}
+    \hldef{\}}
+    \hlkwa{if}\hldef{(right.t.test}\hlopt{$}\hldef{p.value} \hlopt{<} \hldef{sig.level) \{} \hlcom{#if p value for right-tailed test is less than 0.05}
+      \hldef{rejections.right} \hlkwb{=} \hldef{rejections.right} \hlopt{+} \hlnum{1} \hlcom{#reject}
+    \hldef{\}}
+    \hlkwa{if}\hldef{(twosided.t.test}\hlopt{$}\hldef{p.value} \hlopt{<} \hldef{sig.level) \{} \hlcom{#if p value for two-tailed test is less than 0.05}
+      \hldef{rejections.two} \hlkwb{=} \hldef{rejections.two} \hlopt{+} \hlnum{1} \hlcom{#reject}
+    \hldef{\}}
+
+  \hldef{\}}
+  \hlkwd{return} \hldef{(}\hlkwd{c}\hldef{(}\hlkwc{left.rate} \hldef{= rejections.left}\hlopt{/}\hldef{simulations,}
+            \hlkwc{right.rate} \hldef{= rejections.right}\hlopt{/}\hldef{simulations,}
+            \hlkwc{twosided.rate} \hldef{= rejections.two}\hlopt{/}\hldef{simulations))}
+\hldef{\}}
+
+\hldef{(beta.10.2} \hlkwb{=} \hlkwd{beta.t.test}\hldef{(}\hlnum{10}\hlopt{/}\hlnum{12}\hldef{,} \hlnum{10}\hldef{,} \hlnum{2}\hldef{))} \hlcom{#.0306, 0.0790, .0596}
+\end{alltt}
+\begin{verbatim}
+##     left.rate    right.rate twosided.rate 
+##        0.0306        0.0790        0.0596
+\end{verbatim}
+\begin{alltt}
+\hldef{(beta.2.10} \hlkwb{=} \hlkwd{beta.t.test}\hldef{(}\hlnum{2}\hlopt{/}\hlnum{12}\hldef{,} \hlnum{2}\hldef{,} \hlnum{10}\hldef{))} \hlcom{#.0790, .0306, .0596}
+\end{alltt}
+\begin{verbatim}
+##     left.rate    right.rate twosided.rate 
+##        0.0790        0.0306        0.0596
+\end{verbatim}
+\begin{alltt}
+\hldef{(beta.10.10} \hlkwb{=} \hlkwd{beta.t.test}\hldef{(}\hlnum{10}\hlopt{/}\hlnum{20}\hldef{,} \hlnum{10}\hldef{,} \hlnum{10}\hldef{))} \hlcom{#.0490, .0503, .0498}
+\end{alltt}
+\begin{verbatim}
+##     left.rate    right.rate twosided.rate 
+##        0.0490        0.0503        0.0498
+\end{verbatim}
+\end{kframe}
+\end{knitrout}
   \begin{enumerate}
     \item What proportion of the time do we make an error of Type I for a
     left-tailed test?
+For the Beta(10,2) distribution (left-skewed), the Type I error rate for the left-tailed test was 0.0306. For the Beta(2,10) distribution (right-skewed), it was 0.0790. For the Beta(10,10) distribution (symmetric), it was 0.0490. 
     \item What proportion of the time do we make an error of Type I for a
     right-tailed test?
+For the Beta(10,2) distribution (left-skewed), the Type I error rate for the right-tailed test was 0.0790. For the Beta(2,10) distribution (right-skewed), it was 0.0306. For the Beta(10,10) distribution (symmetric), it was 0.0503. As you can see, the left-tailed and right-tailed rates are flipped for the left-skewed and right-skewed distributions.
     \item What proportion of the time do we make an error of Type I for a
     two-tailed test?
+For the Beta(10,2) distribution (left-skewed), the Type I error rate for the two-tailed test was 0.0596. For the Beta(2,10) distribution (right-skewed), it was also 0.0596. For the Beta(10,10) distribution (symmetric), it was 0.0498. 
     \item How does skewness of the underlying population distribution effect
     Type I error across the test types?
+For left-skewed population distributions (Beta(10,2)), there is going to be a higher Type I error rate (\textgreater 0.05) for the right-tailed test. This is because the t-statistic is more likely to be in the right tail, because more of the data is on the right side. The opposite is true for the left-tailed test (\textless 0.05), because the t-statistic is less likely to be in the left tail. Finally, the two-tailed error rate is 
+\\
+For right-skewed population distributions (Beta(2,10)), the opposite is true for left-tailed and right-tailed tests. This is because the majority of the data is now on the left side. So left-tailed tests will yield a higher Type I error rate, while right-tailed tests will yield a lower Type I error rate. The two-tailed error rate is the same as it is for left-skewed population distributions.
+\\
+Lastly, for symmetric population distributions (Beta(10,10)), all of the tests should result in a Type I error rate similar to 0.05. This is because the distribution is symmetric and approximately normal
   \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

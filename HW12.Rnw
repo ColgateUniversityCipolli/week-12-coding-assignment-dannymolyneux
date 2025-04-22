@@ -104,16 +104,65 @@ Yes, if you change $\alpha$ to 0.033, which changes the critical values to $t_{0
   Specifically, generate samples of size $n=15$ from the Beta(10,2), Beta(2,10), 
   and Beta(10,10) distributions and conduct the following hypothesis tests against 
   the actual mean for each case (e.g., $\frac{10}{10+2}$, $\frac{2}{10+2}$, and 
-  $\frac{10}{10+10}$). 
+  $\frac{10}{10+10}$).
+<<message=F, warning=F>>=
+n = 15 #sample size
+sig.level = 0.05 #significance level
+#function that gives Type I error rate for each type of t test for a given Beta distribution
+beta.t.test = function(true.mean, alpha, beta){
+  #counters for rejections for each type of t test 
+  rejections.left = 0
+  rejections.right = 0
+  rejections.two = 0
+  set.seed(7272)
+  for(i in 1:simulations){
+    x = rbeta(n, shape1 = alpha, shape2 = beta)
+    #left tailed test for Ha: mu < true.mean
+    left.t.test = t.test(x, mu = true.mean, alternative = "less")
+    #right tailed test for Ha: mu > true.mean
+    right.t.test = t.test(x, mu = true.mean, alternative = "greater")
+    #Two tailed test for Ha: mu != true.mean
+    twosided.t.test = t.test(x, mu = true.mean, alternative = "two.sided")
+    
+    if(left.t.test$p.value < sig.level) { #if p value for left-tailed test is less than 0.05
+      rejections.left = rejections.left + 1 #reject
+    }
+    if(right.t.test$p.value < sig.level) { #if p value for right-tailed test is less than 0.05
+      rejections.right = rejections.right + 1 #reject
+    }
+    if(twosided.t.test$p.value < sig.level) { #if p value for two-tailed test is less than 0.05
+      rejections.two = rejections.two + 1 #reject
+    }
+    
+  }
+  return (c(left.rate = rejections.left/simulations,
+            right.rate = rejections.right/simulations,
+            twosided.rate = rejections.two/simulations))
+}
+
+(beta.10.2 = beta.t.test(10/12, 10, 2)) #.0306, 0.0790, .0596
+
+(beta.2.10 = beta.t.test(2/12, 2, 10)) #.0790, .0306, .0596
+
+(beta.10.10 = beta.t.test(10/20, 10, 10)) #.0490, .0503, .0498
+@
   \begin{enumerate}
     \item What proportion of the time do we make an error of Type I for a
     left-tailed test?
+For the Beta(10,2) distribution (left-skewed), the Type I error rate for the left-tailed test was 0.0306. For the Beta(2,10) distribution (right-skewed), it was 0.0790. For the Beta(10,10) distribution (symmetric), it was 0.0490. 
     \item What proportion of the time do we make an error of Type I for a
     right-tailed test?
+For the Beta(10,2) distribution (left-skewed), the Type I error rate for the right-tailed test was 0.0790. For the Beta(2,10) distribution (right-skewed), it was 0.0306. For the Beta(10,10) distribution (symmetric), it was 0.0503. As you can see, the left-tailed and right-tailed rates are flipped for the left-skewed and right-skewed distributions.
     \item What proportion of the time do we make an error of Type I for a
     two-tailed test?
+For the Beta(10,2) distribution (left-skewed), the Type I error rate for the two-tailed test was 0.0596. For the Beta(2,10) distribution (right-skewed), it was also 0.0596. For the Beta(10,10) distribution (symmetric), it was 0.0498. 
     \item How does skewness of the underlying population distribution effect
     Type I error across the test types?
+For left-skewed population distributions (Beta(10,2)), there is going to be a higher Type I error rate (\textgreater 0.05) for the right-tailed test. This is because the t-statistic is more likely to be in the right tail, because more of the data is on the right side. The opposite is true for the left-tailed test (\textless 0.05), because the t-statistic is less likely to be in the left tail. Finally, the two-tailed error rate is 
+\\
+For right-skewed population distributions (Beta(2,10)), the opposite is true for left-tailed and right-tailed tests. This is because the majority of the data is now on the left side. So left-tailed tests will yield a higher Type I error rate, while right-tailed tests will yield a lower Type I error rate. The two-tailed error rate is the same as it is for left-skewed population distributions.
+\\
+Lastly, for symmetric population distributions (Beta(10,10)), all of the tests should result in a Type I error rate similar to 0.05. This is because the distribution is symmetric and approximately normal
   \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
